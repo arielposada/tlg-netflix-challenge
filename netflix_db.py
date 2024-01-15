@@ -94,8 +94,8 @@ def save_document(db, collection_name, name, company, director, genre):
 # Método para la consulta de los directores
 def get_all_directors(db, collection_name):
     
-    directors_query = db.collection(collection_name).select(['director']).distinct()
-    directors_list = [doc.get('director') for doc in directors_query]
+    directors_query = db.collection(collection_name).select(['director']).get()
+    directors_list = list(set(doc.get('director') for doc in directors_query))
 
     return sorted(directors_list)
 

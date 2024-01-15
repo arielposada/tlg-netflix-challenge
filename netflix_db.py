@@ -28,18 +28,24 @@ def initialize(db, collection_name, csv_file_path):
         doc_data['name_lowercase'] = doc_data['name'].lower()
         db.collection(collection_name).add(doc_data)
    
-
+# Método para convertir el resultado en dataframe
 def results_to_dataframe(results):
-    # Método para convertir el resultado en dataframe
     dataset = [{doc.id: doc.to_dict()} for doc in results]
     df = pd.DataFrame.from_dict({item: data for sublist in dataset for item, data in sublist.items()}, orient='index')
-    
+
     # Columnas requeridas
     columns = ['name', 'company', 'director', 'genre']
     for column in columns:
         if column not in df.columns:
             df[column] = ""
     return df
+
+# Método para obtenre todas las películas
+def get_all_movies(db, collection_name):
+    all_movies_results = db.collection(collection_name).get()
+
+    all_movies_df = results_to_dataframe(all_movies_results)
+    return all_movies_df[['name', 'company', 'director', 'genre']]
 
 def search_movies_by_title(db, collection_name, title_query):
     # Búsqueda por título, ignorando mayúsculas
@@ -71,17 +77,17 @@ def search_movies_by_director(db, collection_name, director_query):
 
 # Método para hacer el guardado
 def save_document(db, collection_name, name, company, director, genre):
-  name_lowercase = name.lower()
+    name_lowercase = name.lower()
 
-  # Estructura
-  movie = {
-      'name': name,
-      'company': company,
-      'director': director,
-      'genre': genre,
-      'name_lowercase': name_lowercase,
-  }
+    # Estructura
+    movie = {
+        'name': name,
+        'company': company,
+        'director': director,
+        'genre': genre,
+        'name_lowercase': name_lowercase,
+    }
 
-  # Guardado
-  db.collection(collection_name).add(movie)
+    # Guardado
+    db.collection(collection_name).add(movie)
 

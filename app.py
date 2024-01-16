@@ -64,11 +64,13 @@ all_movies_df = get_all_movies(db, collection_name)
 # Obtener la lista de directores para el combo
 # Dejó de usarse la versión previa para minimizar el número de lecturas
 # directores_list = get_all_directors(db, collection_name)
-directores_list = sorted(all_movies_df['director'].unique())
+directors_list = sorted(all_movies_df['director'].unique())
+companies_list = sorted(all_movies_df['company'].unique())
+genres_list = sorted(all_movies_df['genre'].unique())
 
 with st.sidebar:
     # Mostrar combo para seleccionar director
-    selected_director = st.selectbox("Seleccionar director", ["Todos"] + directores_list,key="director")
+    selected_director = st.selectbox("Seleccionar director", ["Todos"] + directors_list,key="director")
     filtrar_director_button = st.button("Filtrar director")
 
 # Considerar la opción "Todos" para el filtro
@@ -84,8 +86,30 @@ if filtrar_director_button:
         st.dataframe(director_results_df)
 
 
+##########################################################################################
+# Formulario nuevo filme                                                                 #
+########################################################################################## 
+        
+with st.sidebar:
+    
+    st.sidebar.title("Nuevo filme")
+    film_name = st.sidebar.text_input("Nombre", key="film_name")
+    film_director = st.sidebar.selectbox("Director", directors_list, key="director")
+    film_company = st.sidebar.selectbox("Director", companies_list, key="film_company")
+    film_genre = st.sidebar.selectbox("Género", genres_list, key="genre")
 
+    # Botón para crear nuevo filme con atributo key
+    crear_filme_button = st.sidebar.button("Crear nuevo filme", key="crear_filme")
 
+# Lógica para guardar el nuevo filme si se presiona el botón
+if crear_filme_button:
+    # Verifica que los campos no estén vacíos
+    if film_name and film_company and film_director and film_genre:
+        # Llama a la función para guardar el nuevo filme
+        save_document(db, collection_name, film_name, film_company, film_director, film_genre)
+        st.sidebar.success("Registro creado exitosamente")
+    else:
+        st.sidebar.error("Datos incompletos")
 
 ##########################################################################################
 # Mostrar todos                                                                          #
@@ -93,3 +117,4 @@ if filtrar_director_button:
 if mostrar_todos_checkbox:
     st.subheader("Todos los filmes")
     st.dataframe(all_movies_df)
+

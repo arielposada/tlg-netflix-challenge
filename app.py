@@ -8,6 +8,11 @@ columns = ['name', 'genre', 'director', 'company']
 collection_name = "movies" 
 
 def get_firebase_app():
+    # Intenta detener la aplicación de Firebase si ya está inicializada
+    try: 
+        firebase_admin.delete_app(st.firebase_app)
+    except:
+        pass
     # Inicializar base de datos
     cred = credentials.Certificate("certificate.json") 
     firebase_admin.initialize_app(cred)

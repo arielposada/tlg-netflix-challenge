@@ -57,8 +57,14 @@ if buscar_titulo_button:
 ##########################################################################################
 # Buscar por director (combo)                                                            #
 ########################################################################################## 
+    
+# Obtiene la lista de todas las películas para minimizar numero de lecturas
+    
+all_movies_df = get_all_movies(db, collection_name)
 # Obtener la lista de directores para el combo
-directores_list = get_all_directors(db, collection_name)
+# Dejó de usarse la versión previa para minimizar el número de lecturas
+# directores_list = get_all_directors(db, collection_name)
+directores_list = sorted(all_movies_df['director'].unique())
 
 with st.sidebar:
     # Mostrar combo para seleccionar director
@@ -86,5 +92,4 @@ if filtrar_director_button:
 ########################################################################################## 
 if mostrar_todos_checkbox:
     st.subheader("Todos los filmes")
-    all_movies_df = get_all_movies(db, collection_name)
     st.dataframe(all_movies_df)

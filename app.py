@@ -8,16 +8,9 @@ columns = ['name', 'genre', 'director', 'company']
 collection_name = "movies" 
 
 def get_firebase_app():
-    # Intenta detener la aplicación de Firebase si ya está inicializada
-    try: 
-        firebase_admin.delete_app(st.firebase_app)
-    except:
-        pass
     # Inicializar base de datos
     cred = credentials.Certificate("certificate.json") 
     firebase_admin.initialize_app(cred)
-    # Carga inicial de la base de datos
-    initialize(db, collection_name, "movies.csv")
 
 try:
     get_firebase_app()
@@ -27,6 +20,14 @@ except:
 
 # Get reference to Firestore database
 db = firestore.client()
+
+
+# Obtiene la lista de todas las películas para minimizar numero de lecturas
+all_movies_df = get_all_movies(db, collection_name)
+if all_movies_df.empty:
+    # Carga inicial de la base de datos, si, solo si, está vacía
+    initialize(db, collection_name, "movies.csv")
+    all_movies_df = get_all_movies(db, collection_name)
 
 # Mostrar la interfaz de usuario con Streamlit
 st.title("Netflix app")
@@ -58,9 +59,6 @@ if buscar_titulo_button:
 # Buscar por director (combo)                                                            #
 ########################################################################################## 
     
-# Obtiene la lista de todas las películas para minimizar numero de lecturas
-    
-all_movies_df = get_all_movies(db, collection_name)
 # Obtener la lista de directores para el combo
 # Dejó de usarse la versión previa para minimizar el número de lecturas
 # directores_list = get_all_directors(db, collection_name)
@@ -78,7 +76,7 @@ if filtrar_director_button:
     st.subheader("Resultados de la búsqueda por director")
     if selected_director == "Todos":
         # Mostrar todos si se eligió "Todos"
-        all_movies_df = get_all_movies(db, collection_name)
+        # all_movies_df = get_all_movies(db, collection_name)
         st.dataframe(all_movies_df)
     else:
         # De lo contrario filtrar por director
@@ -108,6 +106,12 @@ if crear_filme_button:
         # Llama a la función para guardar el nuevo filme
         save_document(db, collection_name, film_name, film_company, film_director, film_genre)
         st.sidebar.success("Registro creado exitosamente")
+
+        # Actualiza la lista de filmes
+        all_movies_df = get_all_movies(db, collection_name)
+
+        # Activa botón de mostrar todos los filmes
+        mostrar_todos_checkbox = True
     else:
         st.sidebar.error("Datos incompletos")
 

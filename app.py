@@ -4,19 +4,26 @@ import firebase_admin
 from firebase_admin import credentials, firestore
 from netflix_db import initialize, get_all_movies, search_movies_by_title, search_movies_by_director, save_document, get_all_directors
 
+
 columns = ['name', 'genre', 'director', 'company']
 collection_name = "movies" 
 
 def get_firebase_app():
     # Inicializar base de datos
-    cred = credentials.Certificate(st.secrets["firebase"]['tlg_netflix_settings']) 
+    dic = dict(st.secrets["firebase"])
+    cred = credentials.Certificate(dic) 
     firebase_admin.initialize_app(cred)
+
+
+get_firebase_app()
 
 try:
     get_firebase_app()
     print("La base de datos fue inicializada")
 except:
     print("La base de datos ya está inicializada")
+
+
 
 # Get reference to Firestore database
 db = firestore.client()

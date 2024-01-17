@@ -37,7 +37,8 @@ st.title("Netflix app")
 # Mostrar todos los filmes  (checkbox)                                                   #
 ##########################################################################################
 with st.sidebar:
-    mostrar_todos_checkbox = st.checkbox("Mostrar todos los filmes", value=True)
+    # Oculto por defecto
+    mostrar_todos_checkbox = st.checkbox("Mostrar todos los filmes", value=False, key="mostrar_todos")
 
 
 
@@ -92,9 +93,9 @@ with st.sidebar:
     
     st.sidebar.title("Nuevo filme")
     film_name = st.sidebar.text_input("Nombre", key="film_name")
-    film_director = st.sidebar.selectbox("Director", directors_list, key="director")
+    film_director = st.sidebar.selectbox("Director", directors_list, key="film_director")
     film_company = st.sidebar.selectbox("Director", companies_list, key="film_company")
-    film_genre = st.sidebar.selectbox("Género", genres_list, key="genre")
+    film_genre = st.sidebar.selectbox("Género", genres_list, key="film_genre")
 
     # Botón para crear nuevo filme con atributo key
     crear_filme_button = st.sidebar.button("Crear nuevo filme", key="crear_filme")
@@ -121,4 +122,3 @@ if crear_filme_button:
 if mostrar_todos_checkbox:
     st.subheader("Todos los filmes")
     st.dataframe(all_movies_df)
-

@@ -9,7 +9,7 @@ collection_name = "movies"
 
 def get_firebase_app():
     # Inicializar base de datos
-    cred = credentials.Certificate("certificate.json") 
+    cred = credentials.Certificate(st.secrets["firebase"]['tlg_netflix_settings']) 
     firebase_admin.initialize_app(cred)
 
 try:

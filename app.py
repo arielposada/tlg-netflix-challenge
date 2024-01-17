@@ -14,9 +14,6 @@ def get_firebase_app():
     cred = credentials.Certificate(dic) 
     firebase_admin.initialize_app(cred)
 
-
-get_firebase_app()
-
 try:
     get_firebase_app()
     print("La base de datos fue inicializada")
